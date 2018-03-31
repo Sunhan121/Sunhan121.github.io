@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="三十而立">
+  <meta name="keywords" content="Java">
+  
+    <link rel="icon" href="/favicon.ico">
+  
+    
+  <title>Mybatis学习记录 | 孙汉</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>孙汉</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Mybatis学习记录</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2017年09月21日</time>
+            
+            
+          </div>
+          <h4 id="1-insert返回主键自增的值"><a href="#1-insert返回主键自增的值" class="headerlink" title="1. insert返回主键自增的值"></a>1. insert返回主键自增的值</h4><h5 id="1-1-使用JDBC方式"><a href="#1-1-使用JDBC方式" class="headerlink" title="1.1. 使用JDBC方式"></a>1.1. 使用JDBC方式</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;insert id=&quot;test&quot; useGeneratedkeys=&quot;true&quot; keyProperty=&quot;id&quot;&gt;</span><br><span class="line">    insert into ...</span><br><span class="line">&lt;/insert&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="1-2-使用selectkey"><a href="#1-2-使用selectkey" class="headerlink" title="1.2. 使用selectkey"></a>1.2. 使用selectkey</h5><h6 id="在Mysql数据库中，当前记录的主键值在insert语句执行之后才获得"><a href="#在Mysql数据库中，当前记录的主键值在insert语句执行之后才获得" class="headerlink" title="在Mysql数据库中，当前记录的主键值在insert语句执行之后才获得"></a>在Mysql数据库中，当前记录的主键值在insert语句执行之后才获得</h6><h6 id="在Oracle数据库中，需要先从序列中获得值，然后将值作为主键插入数据库"><a href="#在Oracle数据库中，需要先从序列中获得值，然后将值作为主键插入数据库" class="headerlink" title="在Oracle数据库中，需要先从序列中获得值，然后将值作为主键插入数据库"></a>在Oracle数据库中，需要先从序列中获得值，然后将值作为主键插入数据库</h6><h6 id="1-Mysql数据库"><a href="#1-Mysql数据库" class="headerlink" title="(1). Mysql数据库"></a>(1). Mysql数据库</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;insert id=&quot;test&quot;&gt;</span><br><span class="line">    insert into ...</span><br><span class="line">    &lt;selectKey keyColumn=&quot;id&quot; keyProperty=&quot;id&quot; order=&quot;AFTER&quot; resultType=&quot;long&quot;&gt;</span><br><span class="line">        SELECT LAST_INSERT_ID()</span><br><span class="line">    &lt;/selectKey&gt;</span><br><span class="line">&lt;/insert&gt;</span><br></pre></td></tr></table></figure>
+<h6 id="2-Oracle数据库"><a href="#2-Oracle数据库" class="headerlink" title="(2). Oracle数据库"></a>(2). Oracle数据库</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;insert id=&quot;test&quot;&gt;</span><br><span class="line">    &lt;selectKey keyColumn=&quot;id&quot; keyProperty=&quot;id&quot; order=&quot;BEFORE&quot; resultType=&quot;long&quot;&gt;</span><br><span class="line">        SELECT SEQ_ID.nextval from dual</span><br><span class="line">    &lt;/selectKey&gt;</span><br><span class="line">    insert into ...</span><br><span class="line">&lt;/insert&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="2-resultMap属性extends"><a href="#2-resultMap属性extends" class="headerlink" title="2. resultMap属性extends"></a>2. resultMap属性extends</h4><h6 id="配置当前resultMap继承其他resultMap，减少代码量"><a href="#配置当前resultMap继承其他resultMap，减少代码量" class="headerlink" title="配置当前resultMap继承其他resultMap，减少代码量"></a>配置当前resultMap继承其他resultMap，减少代码量</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;resultMap id=&quot;baseMap&quot; type=&quot;com.test.demo.model.Model1&quot;&gt;</span><br><span class="line">    ...</span><br><span class="line">&lt;/resultMap&gt;</span><br><span class="line"></span><br><span class="line">&lt;resultMap id=&quot;theMap&quot; type=&quot;com.test.demo.model.Model2&quot; extends=&quot;baseMap&quot;&gt;</span><br><span class="line">    ...</span><br><span class="line">&lt;/resultMap&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="3-jdbcType"><a href="#3-jdbcType" class="headerlink" title="3. jdbcType"></a>3. jdbcType</h4><h6 id="列对应的数据库类型，在insert、update、delete操作可能为空的列时，需要添加，是JDBC需要，不是Mybatis。"><a href="#列对应的数据库类型，在insert、update、delete操作可能为空的列时，需要添加，是JDBC需要，不是Mybatis。" class="headerlink" title="列对应的数据库类型，在insert、update、delete操作可能为空的列时，需要添加，是JDBC需要，不是Mybatis。"></a>列对应的数据库类型，在insert、update、delete操作可能为空的列时，需要添加，是JDBC需要，不是Mybatis。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;update id=&quot;test&quot;&gt;</span><br><span class="line">    update hotel set img=#&#123;img, jdbcType=BLOB&#125; where hotelid=#&#123;hotelid&#125;</span><br><span class="line">&lt;/update&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="4-Mapper接口参数"><a href="#4-Mapper接口参数" class="headerlink" title="4. Mapper接口参数"></a>4. Mapper接口参数</h4><h6 id="一个参数可以不写-param注解，一个以上必须写"><a href="#一个参数可以不写-param注解，一个以上必须写" class="headerlink" title="一个参数可以不写@param注解，一个以上必须写"></a>一个参数可以不写@param注解，一个以上必须写</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Model selectData(@param(&quot;id&quot;) Long id);// @param可以省去</span><br><span class="line">    </span><br><span class="line">void update(@param(&quot;id&quot;) Long id,</span><br><span class="line">             @param(&quot;status&quot;) String status);</span><br></pre></td></tr></table></figure>
+<h4 id="5-Mapper接口实现原理"><a href="#5-Mapper接口实现原理" class="headerlink" title="5. Mapper接口实现原理"></a>5. Mapper接口实现原理</h4><h6 id="动态代理：使用接口的全限定名称和当前调用的方法名组合成一个方法id-这个id的值就是映射XML中namespace和具体方法id的组合。"><a href="#动态代理：使用接口的全限定名称和当前调用的方法名组合成一个方法id-这个id的值就是映射XML中namespace和具体方法id的组合。" class="headerlink" title="动态代理：使用接口的全限定名称和当前调用的方法名组合成一个方法id,这个id的值就是映射XML中namespace和具体方法id的组合。"></a>动态代理：使用接口的全限定名称和当前调用的方法名组合成一个方法id,这个id的值就是映射XML中namespace和具体方法id的组合。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">// 接口</span><br><span class="line">public interface UserMapper &#123;</span><br><span class="line">    List&lt;SysUser&gt; selectAll();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 代理类</span><br><span class="line">public class MyMapperProxy&lt;T&gt; implements InvocationHandler &#123;</span><br><span class="line">    private Class&lt;T&gt; mapperInterface;</span><br><span class="line">    private SqlSession sqlSession;</span><br><span class="line">    </span><br><span class="line">    public MyMapperProxy(Class&lt;T&gt; mapperInterface, SqlSession sqlSession) &#123;</span><br><span class="line">        this.mapperInterface = mapperInterface;</span><br><span class="line">        this.sqlSession = sqlSession;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    @Override</span><br><span class="line">    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable&#123;</span><br><span class="line">        List&lt;T&gt; list = sqlSession.selectList(mapperInterface.getCanonicalName() + &quot;.&quot; + method.getName());</span><br><span class="line">        return list;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">// 测试</span><br><span class="line">SqlSession sqlSession = getSqlSession(); // 公共方法获得Mybatis的SqlSession</span><br><span class="line"></span><br><span class="line">MyMapperProxy userMapperProxy = new MyMapperProxy(UserMapper.class, seqSession);</span><br><span class="line">UserMapper userMapper = (UserMapper) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[] &#123; UserMapper.class &#125;, userMapperProxy);</span><br><span class="line"></span><br><span class="line">List&lt;SysUser&gt; userList = userMapper.selectAll();</span><br></pre></td></tr></table></figure>
+<h4 id="6-动态SQL"><a href="#6-动态SQL" class="headerlink" title="6. 动态SQL"></a>6. 动态SQL</h4><h5 id="1-if用法"><a href="#1-if用法" class="headerlink" title="(1). if用法"></a>(1). if用法</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select * from test where 1=1</span><br><span class="line">&lt;if test=&quot;name != null and name !=&apos;&apos;&quot;&gt;</span><br><span class="line">    and name=#&#123;name&#125;</span><br><span class="line">&lt;/if&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="2-choose用法"><a href="#2-choose用法" class="headerlink" title="(2). choose用法"></a>(2). choose用法</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">select * from test where 1=1</span><br><span class="line">&lt;choose&gt;</span><br><span class="line">    &lt;when test=&quot;name != null and name !=&apos;&apos;&quot;&gt;</span><br><span class="line">        and name=#&#123;name&#125;</span><br><span class="line">    &lt;/when&gt;</span><br><span class="line">    &lt;otherwise&gt;</span><br><span class="line">        and 1=2</span><br><span class="line">    &lt;/otherwise&gt;</span><br><span class="line">&lt;/choose&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="3-where用法"><a href="#3-where用法" class="headerlink" title="(3). where用法"></a>(3). where用法</h5><h6 id="如果该标签包含的元素中有返回值，就插入一个where；如果where后面的字符串是以and和or开头的，就将他们剔除；如果没有元素，就不会出现where语句。"><a href="#如果该标签包含的元素中有返回值，就插入一个where；如果where后面的字符串是以and和or开头的，就将他们剔除；如果没有元素，就不会出现where语句。" class="headerlink" title="如果该标签包含的元素中有返回值，就插入一个where；如果where后面的字符串是以and和or开头的，就将他们剔除；如果没有元素，就不会出现where语句。"></a>如果该标签包含的元素中有返回值，就插入一个where；如果where后面的字符串是以and和or开头的，就将他们剔除；如果没有元素，就不会出现where语句。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">select * from test</span><br><span class="line">&lt;where&gt;</span><br><span class="line">    &lt;if test=&quot;name != null and name !=&apos;&apos;&quot;&gt;</span><br><span class="line">        and name=#&#123;name&#125;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">&lt;/where&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="4-set用法"><a href="#4-set用法" class="headerlink" title="(4). set用法"></a>(4). set用法</h5><h6 id="如果该标签包含的元素中又返回值，就插入一个set；如果set后面有’-’，就删除它。"><a href="#如果该标签包含的元素中又返回值，就插入一个set；如果set后面有’-’，就删除它。" class="headerlink" title="如果该标签包含的元素中又返回值，就插入一个set；如果set后面有’,’，就删除它。"></a>如果该标签包含的元素中又返回值，就插入一个set；如果set后面有’,’，就删除它。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">update test </span><br><span class="line">&lt;set&gt;</span><br><span class="line">    name=#&#123;name,jdbcType=VARCHAR&#125;,</span><br><span class="line">    &lt;if test=&quot;descript != null &amp;&amp; descript !=&apos;&apos;&quot;&gt;</span><br><span class="line">        descript=#&#123;decript&#125;,</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">&lt;/set&gt;</span><br><span class="line">where id=#&#123;id&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="5-foreach-实现-in-集合"><a href="#5-foreach-实现-in-集合" class="headerlink" title="(5). foreach 实现 in 集合"></a>(5). foreach 实现 in 集合</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select * from test where id in</span><br><span class="line">&lt;foreach collection=&quot;idList&quot; open=&quot;(&quot; colse=&quot;)&quot; separator=&quot;,&quot; item=&quot;id&quot; index=&quot;i&quot;&gt;</span><br><span class="line">    #&#123;id&#125;</span><br><span class="line">&lt;/foreach&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="6-foreach-实现批量插入"><a href="#6-foreach-实现批量插入" class="headerlink" title="(6). foreach 实现批量插入"></a>(6). foreach 实现批量插入</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 接口</span><br><span class="line">int insertList(@param(&quot;valueList&quot;) List&lt;Test&gt; valueList);</span><br><span class="line"></span><br><span class="line">insert into test(name,descript) values</span><br><span class="line">&lt;foreach collection=&quot;valueList&quot; item=&quot;obj&quot; separator=&quot;,&quot;&gt;</span><br><span class="line">    (</span><br><span class="line">    #&#123;obj.name&#125;,#&#123;obj.descript&#125;</span><br><span class="line">    )</span><br><span class="line">&lt;/foreach&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="7-bind用法"><a href="#7-bind用法" class="headerlink" title="(7). bind用法"></a>(7). bind用法</h5><h6 id="concat函数连接字符串，Mysql中支持多个参数，但是Oracle只支持两个"><a href="#concat函数连接字符串，Mysql中支持多个参数，但是Oracle只支持两个" class="headerlink" title="concat函数连接字符串，Mysql中支持多个参数，但是Oracle只支持两个"></a>concat函数连接字符串，Mysql中支持多个参数，但是Oracle只支持两个</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;if test=&quot;name != null and name != &apos;&apos;&quot;&gt;</span><br><span class="line">    &lt;bind name=&quot;nameLike&quot; value=&quot;&apos;%&quot; + name + &quot;%&apos;&quot;/&gt;</span><br><span class="line">    and name like #&#123;nameLike&#125;</span><br><span class="line">&lt;/if&gt;</span><br></pre></td></tr></table></figure>
+        </section>
+    </article>
+    
+        <!-- disqus 评论框 start -->
+        <div class="comment">
+            <div id="disqus_thread" class="disqus-thread">
+              <i>加载评论框需要翻墙</i>
+            </div>
+        </div>
+        <!-- disqus 评论框 end -->
+    
+    
+        <!-- livere 评论框 start -->
+        <div class="comment">
+            <div id="lv-container" data-id="city" data-uid="your_livere_uid"></div>
+        </div>
+        <!-- livere 评论框 end -->
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-insert返回主键自增的值"><span class="toc-number">1.</span> <span class="toc-text">1. insert返回主键自增的值</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-1-使用JDBC方式"><span class="toc-number">1.1.</span> <span class="toc-text">1.1. 使用JDBC方式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-2-使用selectkey"><span class="toc-number">1.2.</span> <span class="toc-text">1.2. 使用selectkey</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#在Mysql数据库中，当前记录的主键值在insert语句执行之后才获得"><span class="toc-number">1.2.1.</span> <span class="toc-text">在Mysql数据库中，当前记录的主键值在insert语句执行之后才获得</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#在Oracle数据库中，需要先从序列中获得值，然后将值作为主键插入数据库"><span class="toc-number">1.2.2.</span> <span class="toc-text">在Oracle数据库中，需要先从序列中获得值，然后将值作为主键插入数据库</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#1-Mysql数据库"><span class="toc-number">1.2.3.</span> <span class="toc-text">(1). Mysql数据库</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#2-Oracle数据库"><span class="toc-number">1.2.4.</span> <span class="toc-text">(2). Oracle数据库</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-resultMap属性extends"><span class="toc-number">2.</span> <span class="toc-text">2. resultMap属性extends</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#配置当前resultMap继承其他resultMap，减少代码量"><span class="toc-number">2.0.1.</span> <span class="toc-text">配置当前resultMap继承其他resultMap，减少代码量</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-jdbcType"><span class="toc-number">3.</span> <span class="toc-text">3. jdbcType</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#列对应的数据库类型，在insert、update、delete操作可能为空的列时，需要添加，是JDBC需要，不是Mybatis。"><span class="toc-number">3.0.1.</span> <span class="toc-text">列对应的数据库类型，在insert、update、delete操作可能为空的列时，需要添加，是JDBC需要，不是Mybatis。</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-Mapper接口参数"><span class="toc-number">4.</span> <span class="toc-text">4. Mapper接口参数</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#一个参数可以不写-param注解，一个以上必须写"><span class="toc-number">4.0.1.</span> <span class="toc-text">一个参数可以不写@param注解，一个以上必须写</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-Mapper接口实现原理"><span class="toc-number">5.</span> <span class="toc-text">5. Mapper接口实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#动态代理：使用接口的全限定名称和当前调用的方法名组合成一个方法id-这个id的值就是映射XML中namespace和具体方法id的组合。"><span class="toc-number">5.0.1.</span> <span class="toc-text">动态代理：使用接口的全限定名称和当前调用的方法名组合成一个方法id,这个id的值就是映射XML中namespace和具体方法id的组合。</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-动态SQL"><span class="toc-number">6.</span> <span class="toc-text">6. 动态SQL</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-if用法"><span class="toc-number">6.1.</span> <span class="toc-text">(1). if用法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-choose用法"><span class="toc-number">6.2.</span> <span class="toc-text">(2). choose用法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-where用法"><span class="toc-number">6.3.</span> <span class="toc-text">(3). where用法</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#如果该标签包含的元素中有返回值，就插入一个where；如果where后面的字符串是以and和or开头的，就将他们剔除；如果没有元素，就不会出现where语句。"><span class="toc-number">6.3.1.</span> <span class="toc-text">如果该标签包含的元素中有返回值，就插入一个where；如果where后面的字符串是以and和or开头的，就将他们剔除；如果没有元素，就不会出现where语句。</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-set用法"><span class="toc-number">6.4.</span> <span class="toc-text">(4). set用法</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#如果该标签包含的元素中又返回值，就插入一个set；如果set后面有’-’，就删除它。"><span class="toc-number">6.4.1.</span> <span class="toc-text">如果该标签包含的元素中又返回值，就插入一个set；如果set后面有’,’，就删除它。</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-foreach-实现-in-集合"><span class="toc-number">6.5.</span> <span class="toc-text">(5). foreach 实现 in 集合</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6-foreach-实现批量插入"><span class="toc-number">6.6.</span> <span class="toc-text">(6). foreach 实现批量插入</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7-bind用法"><span class="toc-number">6.7.</span> <span class="toc-text">(7). bind用法</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#concat函数连接字符串，Mysql中支持多个参数，但是Oracle只支持两个"><span class="toc-number">6.7.1.</span> <span class="toc-text">concat函数连接字符串，Mysql中支持多个参数，但是Oracle只支持两个</span></a></li></ol></li></ol></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+<!-- disqus 公共JS代码 -->
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES * * */
+  var disqus_shortname = "your_disqus_shortname";
+  var disqus_identifier = "http://yoursite.com/2017/09/21/Mybatis学习记录/";
+  var disqus_url = "http://yoursite.com/2017/09/21/Mybatis学习记录/";
+
+  isAgent(getDisqus)
+
+  // determine user agent in China
+  function isAgent(cb) {
+    var url = '//graph.facebook.com/feed?callback=h';
+    var xhr = new XMLHttpRequest();
+    var called = false;
+    xhr.open('GET', url);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+      called = true;
+      cb(true);
+      }
+    };
+    xhr.send();
+    // timeout 1s, this facebook API is very fast.
+    setTimeout(function() {
+      if (!called) {
+      xhr.abort();
+      cb(false)
+      }
+    }, 1000);
+  }
+
+  function getDisqus(isAgent) {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; 
+    dsq.async = true
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq)
+  }
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+<script type="text/javascript">
+  (function(d, s) {
+      var j, e = d.getElementsByTagName(s)[0];
+
+      if (typeof LivereTower === 'function') { return; }
+
+      j = d.createElement(s);
+      j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+      j.async = true;
+
+      e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2018 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>
